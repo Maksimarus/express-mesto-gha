@@ -29,7 +29,13 @@ const deleteCard = (req, res) => {
       }
       res.send(card);
     })
-    .catch(() => res.status(DEFAULT).send({ message: 'Произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(BAD_REQUEST).send({ message: 'Введен некорректный id карточки' });
+      } else {
+        res.status(DEFAULT).send({ message: 'Произошла ошибка' });
+      }
+    });
 };
 
 const likeCard = (req, res) => {
@@ -45,7 +51,6 @@ const likeCard = (req, res) => {
       res.send(card);
     })
     .catch((err) => {
-      console.log(err.name);
       if (err.name === 'CastError') {
         res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные для постановки лайка' });
       } else {
@@ -67,7 +72,6 @@ const dislikeCard = (req, res) => {
       res.send(card);
     })
     .catch((err) => {
-      console.log(err.name);
       if (err.name === 'CastError') {
         res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные для снятия лайка' });
       } else {

@@ -16,7 +16,13 @@ const getOneUser = (req, res) => {
       }
       res.send(user);
     })
-    .catch(() => res.status(DEFAULT).send({ message: 'Произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(BAD_REQUEST).send({ message: 'Введен некорректный id пользователя' });
+      } else {
+        res.status(DEFAULT).send({ message: 'Произошла ошибка' });
+      }
+    });
 };
 
 const createUser = (req, res) => {
@@ -68,7 +74,6 @@ const updateAvatar = (req, res) => {
       res.send(user);
     })
     .catch((err) => {
-      console.log(err.name);
       if (err.name === 'CastError') {
         res.status(BAD_REQUEST).send({ message: 'Введены некорректные данные пользователя' });
       } else {

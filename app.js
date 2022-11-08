@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const usersRouter = require('./routes/usersRouter');
 const cardsRouter = require('./routes/cardsRouter');
+const { NOT_FOUND } = require('./errors/statusCodes');
 
 const PORT = 3000;
 
@@ -16,6 +17,9 @@ app.use((req, res, next) => {
 });
 app.use('/cards', cardsRouter);
 app.use('/users', usersRouter);
+app.use('*', (req, res) => {
+  res.status(NOT_FOUND).send({ message: 'Введен несуществующий путь' });
+});
 
 try {
   mongoose.connect('mongodb://localhost:27017/mestodb', {
