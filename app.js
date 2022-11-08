@@ -1,13 +1,24 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const usersRouter = require('./routes/usersRouter');
 const cardsRouter = require('./routes/cardsRouter');
 const { NOT_FOUND } = require('./errors/statusCodes');
 
 const PORT = 3000;
 
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 const app = express();
 app.use(express.json());
+app.use(helmet());
+app.use(limiter);
 
 app.use((req, res, next) => {
   req.user = {
