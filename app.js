@@ -9,7 +9,7 @@ const cardRouter = require('./routes/cardRouter');
 const authRouter = require('./routes/authRouter');
 const auth = require('./middlewares/auth');
 const errorsHandler = require('./middlewares/errorsHandler');
-const { NotFound } = require('./errors/NotFound');
+const { NotFound } = require('./errors');
 
 const PORT = 3000;
 const limiter = rateLimit({

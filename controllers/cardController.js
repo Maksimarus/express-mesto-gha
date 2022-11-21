@@ -29,7 +29,7 @@ const deleteCard = async (req, res, next) => {
     }
     if (card.owner.toString() === req.user._id) {
       await Card.findByIdAndRemove(req.params._id);
-      res.send('Карточка успешно удалена');
+      res.send({ message: 'Карточка успешно удалена' });
     } else {
       throw new Forbidden('Невозможно удалить чужую карточку');
     }
