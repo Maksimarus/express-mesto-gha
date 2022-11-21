@@ -3,8 +3,9 @@ const mongoose = require('mongoose');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const rateLimit = require('express-rate-limit');
-const usersRouter = require('./routes/usersRouter');
-const cardsRouter = require('./routes/cardsRouter');
+const { errors } = require('celebrate');
+const userRouter = require('./routes/userRouter');
+const cardRouter = require('./routes/cardRouter');
 const authRouter = require('./routes/authRouter');
 const auth = require('./middlewares/auth');
 const errorsHandler = require('./middlewares/errorsHandler');
@@ -27,11 +28,13 @@ app.use(cookieParser());
 app.use('/', authRouter);
 
 app.use(auth);
-app.use('/cards', cardsRouter);
-app.use('/users', usersRouter);
+app.use('/cards', cardRouter);
+app.use('/users', userRouter);
 app.use('*', () => {
   throw new NotFound('Введен несуществующий путь');
 });
+
+app.use(errors());
 app.use(errorsHandler);
 
 try {

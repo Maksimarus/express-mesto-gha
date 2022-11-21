@@ -1,5 +1,5 @@
 const Card = require('../models/card');
-const { NotFound, BadRequest } = require('../errors');
+const { NotFound, Forbidden } = require('../errors');
 
 const getCards = async (req, res, next) => {
   try {
@@ -16,34 +16,32 @@ const createCard = async (req, res, next) => {
     const card = await Card.create({ name, link, owner: req.user._id });
     res.status(201).send(card);
   } catch (err) {
-    if (err.name === 'ValidationError') {
-      next(new BadRequest('Введены некорректные данные карточки пользователя'));
-    } else {
-      next(err);
-    }
+    console.log(err.message);
+    next(err);
   }
 };
 
 const deleteCard = async (req, res, next) => {
   try {
-    const card = await Card.findByIdAndRemove(req.params.cardId);
+    const card = await Card.findById(req.params._id);
     if (!card) {
       throw new NotFound('Карточка с данным id не найдена');
     }
-    res.send('Карточка успешно удалена');
-  } catch (err) {
-    if (err.name === 'CastError') {
-      next(new BadRequest('Введен некорректный id карточки'));
+    if (card.owner.toString() === req.user._id) {
+      await Card.findByIdAndRemove(req.params._id);
+      res.send('Карточка успешно удалена');
     } else {
-      next(err);
+      throw new Forbidden('Невозможно удалить чужую карточку');
     }
+  } catch (err) {
+    next(err);
   }
 };
 
 const likeCard = async (req, res, next) => {
   try {
     const card = await Card.findByIdAndUpdate(
-      req.params.cardId,
+      req.params._id,
       { $addToSet: { likes: req.user._id } },
       { new: true, runValidators: true },
     );
@@ -52,18 +50,14 @@ const likeCard = async (req, res, next) => {
     }
     res.send(card);
   } catch (err) {
-    if (err.name === 'CastError') {
-      next(new BadRequest('Переданы некорректные данные для постановки лайка'));
-    } else {
-      next(err);
-    }
+    next(err);
   }
 };
 
 const dislikeCard = async (req, res, next) => {
   try {
     const card = await Card.findByIdAndUpdate(
-      req.params.cardId,
+      req.params._id,
       { $pull: { likes: req.user._id } },
       { new: true, runValidators: true },
     );
@@ -72,11 +66,7 @@ const dislikeCard = async (req, res, next) => {
     }
     res.send(card);
   } catch (err) {
-    if (err.name === 'CastError') {
-      next(new BadRequest('Переданы некорректные данные для снятия лайка'));
-    } else {
-      next(err);
-    }
+    next(err);
   }
 };
 
