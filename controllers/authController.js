@@ -15,7 +15,11 @@ const register = async (req, res, next) => {
       name, about, avatar, email, password: hash,
     });
     res.status(201).send({
-      _id: user._id, name: user.name, about: user.about, avatar: user.avatar, email: user.email,
+      _id: user._id,
+      name: user.name,
+      about: user.about,
+      avatar: user.avatar,
+      email: user.email,
     });
   } catch (err) {
     if (err.code === 11000) {
