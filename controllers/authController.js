@@ -12,11 +12,10 @@ const register = async (req, res, next) => {
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
     const user = await User.create({
-      name, about, avatar, email, passwordHash: hash,
+      name, about, avatar, email, password: hash,
     });
-    const { passwordHash, ...userData } = user._doc;
     res.status(201).send({
-      ...userData,
+      name: user.name, about: user.about, avatar: user.avatar, email: user.email,
     });
   } catch (err) {
     if (err.code === 11000) {
@@ -36,7 +35,7 @@ const login = async (req, res, next) => {
       maxAge: 3600000 * 24 * 7,
       httpOnly: true,
     });
-    res.send('Вы успешно авторизованы');
+    res.send({ message: 'Вы успешно авторизованы' });
   } catch (err) {
     next(err);
   }
