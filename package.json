@@ -14,7 +14,7 @@
     "url": "git+https://github.com/Maksimarus/express-mesto-gha.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Maksimarus",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Maksimarus/express-mesto-gha/issues"
@@ -32,7 +32,6 @@
     "express": "^4.18.2",
     "express-rate-limit": "^6.6.0",
     "helmet": "^6.0.0",
-    "joi": "^17.7.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.7.1"
   }

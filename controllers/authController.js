@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const { SECRET_KEY } = require('../env');
-const { Conflict } = require('../errors');
+const { Conflict, BadRequest } = require('../errors');
 
 const register = async (req, res, next) => {
   const {
@@ -24,6 +24,8 @@ const register = async (req, res, next) => {
   } catch (err) {
     if (err.code === 11000) {
       next(new Conflict('Пользователь с таким email уже существует'));
+    } else if (err.name === 'ValidationError') {
+      next(new BadRequest('Введены некорректные данные пользователя'));
     } else {
       next(err);
     }

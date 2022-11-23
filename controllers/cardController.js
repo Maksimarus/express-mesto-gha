@@ -1,5 +1,5 @@
 const Card = require('../models/card');
-const { NotFound, Forbidden } = require('../errors');
+const { NotFound, Forbidden, BadRequest } = require('../errors');
 
 const getCards = async (req, res, next) => {
   try {
@@ -16,8 +16,11 @@ const createCard = async (req, res, next) => {
     const card = await Card.create({ name, link, owner: req.user._id });
     res.status(201).send(card);
   } catch (err) {
-    console.log(err.message);
-    next(err);
+    if (err.name === 'ValidationError') {
+      next(new BadRequest('Введены некорректные данные карточки'));
+    } else {
+      next(err);
+    }
   }
 };
 
@@ -34,7 +37,11 @@ const deleteCard = async (req, res, next) => {
       throw new Forbidden('Невозможно удалить чужую карточку');
     }
   } catch (err) {
-    next(err);
+    if (err.name === 'CastError') {
+      next(new BadRequest('Передан некорректный id карточки'));
+    } else {
+      next(err);
+    }
   }
 };
 
@@ -50,7 +57,11 @@ const likeCard = async (req, res, next) => {
     }
     res.send(card);
   } catch (err) {
-    next(err);
+    if (err.name === 'CastError') {
+      next(new BadRequest('Передан некорректный id карточки'));
+    } else {
+      next(err);
+    }
   }
 };
 
@@ -66,7 +77,11 @@ const dislikeCard = async (req, res, next) => {
     }
     res.send(card);
   } catch (err) {
-    next(err);
+    if (err.name === 'CastError') {
+      next(new BadRequest('Передан некорректный id карточки'));
+    } else {
+      next(err);
+    }
   }
 };
 

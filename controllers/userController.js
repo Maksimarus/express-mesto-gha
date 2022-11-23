@@ -1,5 +1,5 @@
 const User = require('../models/user');
-const { NotFound } = require('../errors');
+const { NotFound, BadRequest } = require('../errors');
 
 const getUsers = async (req, res, next) => {
   try {
@@ -18,7 +18,11 @@ const getOneUser = async (req, res, next) => {
     }
     res.send(user);
   } catch (err) {
-    next(err);
+    if (err.name === 'CastError') {
+      next(new BadRequest('Передан некорректный id пользователя'));
+    } else {
+      next(err);
+    }
   }
 };
 
@@ -34,7 +38,11 @@ const updateProfile = async (req, res, next) => {
     }
     res.send(user);
   } catch (err) {
-    next(err);
+    if (err.name === 'ValidationError') {
+      next(new BadRequest('Введены некорректные данные пользователя'));
+    } else {
+      next(err);
+    }
   }
 };
 
@@ -50,7 +58,11 @@ const updateAvatar = async (req, res, next) => {
     }
     res.send(user);
   } catch (err) {
-    next(err);
+    if (err.name === 'ValidationError') {
+      next(new BadRequest('Введены некорректные данные пользователя'));
+    } else {
+      next(err);
+    }
   }
 };
 
